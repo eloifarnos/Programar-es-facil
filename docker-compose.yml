@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Servei Web: Apache + PHP
+  web:
+    build: .
+    container_name: lamp_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+    depends_on:
+      - db
+    restart: always
+
+  # Servei Base de Dades: MySQL
+  db:
+    image: mysql:8.0
+    container_name: lamp_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: exemple
+      MYSQL_USER: usuari
+      MYSQL_PASSWORD: contrasenya
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Servei Opcional: phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lamp_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
